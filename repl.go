@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/MadridMAC/go_pokedex/internal/pokeapi"
 )
 
 func cleanInput(text string) []string {
@@ -13,7 +15,7 @@ func cleanInput(text string) []string {
 	return split
 }
 
-func startRepl() {
+func startRepl(cfg *config) {
 	// Create NewScanner to receive Stdin input
 	input := bufio.NewScanner(os.Stdin)
 	// REPL proper; Scan and receive input, then clean it
@@ -30,7 +32,7 @@ func startRepl() {
 
 		validCommand, ok := getCommands()[commandText]
 		if ok {
-			err := validCommand.callback()
+			err := validCommand.callback(cfg)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -41,23 +43,39 @@ func startRepl() {
 	}
 }
 
+type config struct {
+	apiClient  pokeapi.Client
+	nextLocURL *string
+	prevLocURL *string
+}
+
 type cliCommand struct {
 	name        string
 	description string
-	callback    func() error
+	callback    func(*config) error
 }
 
 func getCommands() map[string]cliCommand {
 	return map[string]cliCommand{
 		"exit": {
 			name:        "exit",
-			description: "Exit the Pokedex",
+			description: "Exit the Pokedex.",
 			callback:    commandExit,
 		},
 		"help": {
 			name:        "help",
-			description: "Displays a help message",
+			description: "Displays a help message.",
 			callback:    commandHelp,
+		},
+		"map": {
+			name:        "map",
+			description: "Displays the next 20 location areas, with each successive call displaying the next 20.",
+			callback:    commandMap,
+		},
+		"mapb": {
+			name:        "mapb",
+			description: "Displays the previous 20 location areas.",
+			callback:    commandMapb,
 		},
 	}
 }

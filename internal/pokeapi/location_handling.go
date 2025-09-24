@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func (c *Client) locationList(givenURL *string) (RespLocationArea, error) {
+func (c *Client) LocationList(givenURL *string) (RespLocationArea, error) {
 	// Get URL from pokeapi.go | Modify with givenURL if provided
 	url := baseURL + "/location-area"
 	if givenURL != nil {
