@@ -13,6 +13,16 @@ func (c *Client) LocationList(givenURL *string) (RespLocationArea, error) {
 		url = *givenURL
 	}
 
+	// Check if URL exists in cache; if so, unmarshal the cached data
+	value, ok := c.cache.Get(url)
+	if ok {
+		cachedResp := RespLocationArea{}
+		if err := json.Unmarshal(value, &cachedResp); err != nil {
+			return RespLocationArea{}, err
+		}
+		return cachedResp, nil
+	}
+
 	// Create GET request
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -37,6 +47,9 @@ func (c *Client) LocationList(givenURL *string) (RespLocationArea, error) {
 	if err := json.Unmarshal(data, &locResponse); err != nil {
 		return RespLocationArea{}, err
 	}
+
+	// Add response data to cache for future use
+	c.cache.Add(url, data)
 
 	return locResponse, nil
 
