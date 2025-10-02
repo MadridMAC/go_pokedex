@@ -54,9 +54,12 @@ type config struct {
 	caughtPkmn map[string]Pokemon
 }
 
-// to be fleshed out
 type Pokemon struct {
-	name string
+	name   string
+	height int
+	weight int
+	stats  map[string]int
+	types  []string
 }
 
 type cliCommand struct {
@@ -96,6 +99,16 @@ func getCommands() map[string]cliCommand {
 			name:        "catch",
 			description: "Takes the name of a Pokemon. Attempts to catch the Pokemon, adding it to the Pokedex if successful.",
 			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "catch",
+			description: "Takes the name of a Pokemon. If caught, prints the name, height, weight, stats and type(s) of the Pokemon.",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Displays the names of all Pokemon you have already caught.",
+			callback:    commandPokedex,
 		},
 	}
 }
