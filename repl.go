@@ -18,8 +18,8 @@ func cleanInput(text string) []string {
 func startRepl(cfg *config) {
 	// Create NewScanner to receive Stdin input
 	input := bufio.NewScanner(os.Stdin)
-	// REPL proper; Scan and receive input, then clean it
-	// If no text is received, continue. Otherwise, print the first	cleaned "word" as the command
+	// REPL proper; Scan and receive input, then clean it. If no text is received, continue.
+	// Otherwise, get the first two words as command and argument.
 	for {
 		fmt.Print("Pokedex > ")
 		input.Scan()
@@ -51,6 +51,12 @@ type config struct {
 	apiClient  pokeapi.Client
 	nextLocURL *string
 	prevLocURL *string
+	caughtPkmn map[string]Pokemon
+}
+
+// to be fleshed out
+type Pokemon struct {
+	name string
 }
 
 type cliCommand struct {
@@ -85,6 +91,11 @@ func getCommands() map[string]cliCommand {
 			name:        "explore",
 			description: "Takes the name of a location area as an argument. Returns a list of all Pokemon in the specified area.",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch",
+			description: "Takes the name of a Pokemon. Attempts to catch the Pokemon, adding it to the Pokedex if successful.",
+			callback:    commandCatch,
 		},
 	}
 }
